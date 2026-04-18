@@ -1,0 +1,2 @@
+# myblog
+KITSCH LIFE
