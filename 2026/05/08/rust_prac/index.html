@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RUST PRAC FOR THREAD AND MACRO | KITSCH SPACE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RUST PRAC FOR THREAD AND MACROCatalogue basic_conception threads_managemment threads_safty_pattern   basic_conceptionSend and Sync TraitSend: 可以安全地转移到另一个线程 Sync: 可以在多个线程间安全地共享引用 大多数类型都实现了 Send&#x2F;Sy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RUST PRAC FOR THREAD AND MACRO">
+<meta property="og:url" content="https://kitsh1221.github.io/myblog/2026/05/08/rust_prac/index.html">
+<meta property="og:site_name" content="KITSCH SPACE">
+<meta property="og:description" content="RUST PRAC FOR THREAD AND MACROCatalogue basic_conception threads_managemment threads_safty_pattern   basic_conceptionSend and Sync TraitSend: 可以安全地转移到另一个线程 Sync: 可以在多个线程间安全地共享引用 大多数类型都实现了 Send&#x2F;Sy">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-08T13:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-08T15:12:34.296Z">
+<meta property="article:author" content="kitsch">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/myblog/atom.xml" title="KITSCH SPACE" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/myblog/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/myblog/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/myblog/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/myblog/" id="logo">KITSCH SPACE</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/myblog/">Home</a>
+        
+          <a class="main-nav-link" href="/myblog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/myblog/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://KITSH1221.github.io/myblog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-rust_prac" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/myblog/2026/05/08/rust_prac/" class="article-date">
+  <time class="dt-published" datetime="2026-05-08T13:00:00.000Z" itemprop="datePublished">2026-05-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RUST PRAC FOR THREAD AND MACRO
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="RUST-PRAC-FOR-THREAD-AND-MACRO"><a href="#RUST-PRAC-FOR-THREAD-AND-MACRO" class="headerlink" title="RUST PRAC FOR THREAD AND MACRO"></a>RUST PRAC FOR THREAD AND MACRO</h1><h2 id="Catalogue"><a href="#Catalogue" class="headerlink" title="Catalogue"></a>Catalogue</h2><ol>
+<li><a href="#basic_conception">basic_conception</a></li>
+<li><a href="#threads_management">threads_managemment</a></li>
+<li><a href="#threads_safty_pattern">threads_safty_pattern</a></li>
+</ol>
+<hr>
+<h2 id="basic-conception"><a href="#basic-conception" class="headerlink" title="basic_conception"></a>basic_conception</h2><h3 id="Send-and-Sync-Trait"><a href="#Send-and-Sync-Trait" class="headerlink" title="Send and Sync Trait"></a>Send and Sync Trait</h3><p>Send: 可以安全地转移到另一个线程</p>
+<p>Sync: 可以在多个线程间安全地共享引用</p>
+<p>大多数类型都实现了 Send&#x2F;Sync</p>
+<p>Rc<T> 不是 Send（引用计数非原子）</p>
+<p>RefCell<T> 不是 Sync（运行时借用检查非线程安全</p>
+<h2 id="threads-management"><a href="#threads-management" class="headerlink" title="threads_management"></a>threads_management</h2><ol>
+<li>create threads</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 基础线程</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Hello from thread!&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 带数据转移（move 闭包）</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">data</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, data);  <span class="comment">// data 所有权转移到线程</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();  <span class="comment">// 等待线程完成</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>threads lifetimes</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分离线程（detached）</span></span><br><span class="line">thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">    <span class="comment">// 主线程结束，此线程可能被强制终止</span></span><br><span class="line">    thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_secs</span>(<span class="number">1</span>));</span><br><span class="line">&#125;).<span class="title function_ invoke__">detach</span>();  <span class="comment">// 不等待完成</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 通常使用 join 等待</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(|| <span class="number">42</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span> = handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();  <span class="comment">// 等待并获取返回值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理 panic</span></span><br><span class="line"><span class="keyword">match</span> handle.<span class="title function_ invoke__">join</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(result) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;Success: &#123;&#125;&quot;</span>, result),</span><br><span class="line">    <span class="title function_ invoke__">Err</span>(e) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;Thread panicked: &#123;:?&#125;&quot;</span>, e),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>return</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回普通值</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">    <span class="number">42</span>  <span class="comment">// 返回值类型为 i32</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">i32</span> = handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回复杂类型</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">    <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>Scoped Threads</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 作用域线程可以借用局部变量</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">data</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">thread::<span class="title function_ invoke__">scope</span>(|s| &#123;</span><br><span class="line">    s.<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, &amp;data);  <span class="comment">// 可以借用，不需要 move</span></span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    s.<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, &amp;data);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 所有线程在这里自动 join</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="shared-data"><a href="#shared-data" class="headerlink" title="shared data"></a>shared data</h3><ol>
+<li>Arc(Atomic Reference Counting)</li>
+</ol>
+<p>多线程间共享只读数据</p>
+<p>from rustlings</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 8 个线程计算不同偏移的总和</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">numbers</span>: <span class="type">Vec</span>&lt;_&gt; = (<span class="number">0</span>..<span class="number">100u32</span>).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">shared_numbers</span> = Arc::<span class="title function_ invoke__">new</span>(numbers);  <span class="comment">// 共享所有权</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="variable">offset</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">8</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">child_numbers</span> = Arc::<span class="title function_ invoke__">clone</span>(&amp;shared_numbers);  <span class="comment">// 只增加引用计数 克隆指针指向shared_numbers 浅拷贝</span></span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">sum</span>: <span class="type">u32</span> = child_numbers</span><br><span class="line">            .<span class="title function_ invoke__">iter</span>()</span><br><span class="line">            .<span class="title function_ invoke__">filter</span>(|&amp;&amp;n| n % <span class="number">8</span> == offset)</span><br><span class="line">            .<span class="title function_ invoke__">sum</span>();</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Sum of offset &#123;&#125;: &#123;&#125;&quot;</span>, offset, sum);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>Mutex(Mutual Exclusion)</li>
+</ol>
+<p>多线程共享可变数据</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// from rustlings threads2.rs</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">JobStatus</span> &#123;</span><br><span class="line">    jobs_completed: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">status</span> = Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(JobStatus &#123; jobs_completed: <span class="number">0</span> &#125;));</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handles</span> = <span class="built_in">vec!</span>[];</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">status_clone</span> = Arc::<span class="title function_ invoke__">clone</span>(&amp;status);</span><br><span class="line">    handles.<span class="title function_ invoke__">push</span>(thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">data</span> = status_clone.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        data.jobs_completed += <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//锁自动释放</span></span><br><span class="line">    &#125;));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="variable">handle</span> <span class="keyword">in</span> handles &#123;</span><br><span class="line">    handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;jobs completed: &#123;&#125;&quot;</span>, status.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>().jobs_completed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>Rwlock(Reader-Writer Lock)</li>
+</ol>
+<p>多读单写</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, RwLock&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">data</span> = Arc::<span class="title function_ invoke__">new</span>(RwLock::<span class="title function_ invoke__">new</span>(<span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多个读操作可并发</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">reader</span> = data.<span class="title function_ invoke__">read</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;Read: &#123;:?&#125;&quot;</span>, *reader);</span><br><span class="line"><span class="title function_ invoke__">drop</span>(reader);  <span class="comment">// 释放读锁</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 写操作独占</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">writer</span> = data.<span class="title function_ invoke__">write</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">writer.<span class="title function_ invoke__">push</span>(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cow-Clone-on-Write"><a href="#Cow-Clone-on-Write" class="headerlink" title="Cow(Clone-on-Write)"></a>Cow(Clone-on-Write)</h3><p>basic concept</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::borrow::Cow;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Cow 可以是 Borrowed 或 Owned</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">borrowed</span>: Cow&lt;<span class="symbol">&#x27;_</span>, <span class="type">str</span>&gt; = Cow::<span class="title function_ invoke__">Borrowed</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">owned</span>: Cow&lt;<span class="symbol">&#x27;_</span>, <span class="type">str</span>&gt; = Cow::<span class="title function_ invoke__">Owned</span>(<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>copy mode when writing</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">process_text</span>(text: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> Cow&lt;<span class="symbol">&#x27;_</span>, <span class="type">str</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> text.<span class="title function_ invoke__">contains</span>(<span class="string">&quot;bad&quot;</span>) &#123;</span><br><span class="line">        <span class="comment">// 需要修改，创建 Owned 版本</span></span><br><span class="line">        Cow::<span class="title function_ invoke__">Owned</span>(text.<span class="title function_ invoke__">replace</span>(<span class="string">&quot;bad&quot;</span>, <span class="string">&quot;good&quot;</span>))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 不需要修改，直接借用</span></span><br><span class="line">        Cow::<span class="title function_ invoke__">Borrowed</span>(text)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">text</span> = <span class="string">&quot;good text&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">process_text</span>(text);  <span class="comment">// Borrowed - 无复制</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> <span class="variable">text</span> = <span class="string">&quot;bad text&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">process_text</span>(text);  <span class="comment">// Owned - 复制了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test for the rustlings </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">abs_all</span>&lt;<span class="symbol">&#x27;a</span>, <span class="symbol">&#x27;b</span>&gt;(input: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> Cow&lt;<span class="symbol">&#x27;b</span>, [<span class="type">i32</span>]&gt;) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> Cow&lt;<span class="symbol">&#x27;b</span>, [<span class="type">i32</span>]&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..input.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">v</span> = input[i];</span><br><span class="line">        <span class="keyword">if</span> v &lt; <span class="number">0</span> &#123;</span><br><span class="line">            <span class="comment">// to_mut() 在必要时复制（Borrowed → Owned）</span></span><br><span class="line">            input.<span class="title function_ invoke__">to_mut</span>()[i] = -v;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    input</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 四种情况：</span></span><br><span class="line"><span class="comment">// 1. Borrowed + 需要修改 → Owned</span></span><br><span class="line"><span class="comment">// 2. Borrowed + 不需要修改 → Borrowed</span></span><br><span class="line"><span class="comment">// 3. Owned + 不需要修改 → Owned</span></span><br><span class="line"><span class="comment">// 4. Owned + 需要修改 → Owned</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="threads-safty-pattern"><a href="#threads-safty-pattern" class="headerlink" title="threads_safty_pattern"></a>threads_safty_pattern</h2><h3 id="组合模式"><a href="#组合模式" class="headerlink" title="组合模式"></a>组合模式</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 只读共享</span></span><br><span class="line">Arc&lt;T&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 可变共享</span></span><br><span class="line">Arc&lt;Mutex&lt;T&gt;&gt;</span><br><span class="line">Arc&lt;RwLock&lt;T&gt;&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 原子操作</span></span><br><span class="line">Arc&lt;AtomicUsize&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 写时复制</span></span><br><span class="line">Cow&lt;<span class="symbol">&#x27;a</span>, T&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="选择指南"><a href="#选择指南" class="headerlink" title="选择指南"></a>选择指南</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 场景 1: 多个线程读取相同数据</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">data</span> = Arc::<span class="title function_ invoke__">new</span>(<span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 场景 2: 多个线程修改同一数据</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">counter</span> = Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 场景 3: 读多写少</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">cache</span> = Arc::<span class="title function_ invoke__">new</span>(RwLock::<span class="title function_ invoke__">new</span>(HashMap::<span class="title function_ invoke__">new</span>()));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 场景 4: 简单计数</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">counter</span> = Arc::<span class="title function_ invoke__">new</span>(AtomicUsize::<span class="title function_ invoke__">new</span>(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 场景 5: 可能修改但希望避免复制</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">process</span>(s: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> Cow&lt;<span class="symbol">&#x27;_</span>, <span class="type">str</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="title function_ invoke__">need_modify</span>(s) &#123;</span><br><span class="line">        Cow::<span class="title function_ invoke__">Owned</span>(modified)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Cow::<span class="title function_ invoke__">Borrowed</span>(s)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://kitsh1221.github.io/myblog/2026/05/08/rust_prac/" data-id="cuidCYnDBcLOvFalt_PfcSqoU" data-title="RUST PRAC FOR THREAD AND MACRO" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/myblog/2026/04/20/CLOUSR/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">CLOSURE PRAC</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/myblog/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/myblog/archives/2026/04/">四月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/myblog/2026/05/08/rust_prac/">RUST PRAC FOR THREAD AND MACRO</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/20/CLOUSR/">CLOSURE PRAC</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/19/doublelist/">Biderectional List prac in rust</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/18/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/18/build_my_nn/">build_my_nn</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 kitsch<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/myblog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/myblog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/myblog/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/myblog/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/myblog/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
