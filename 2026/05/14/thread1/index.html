@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RUST THREADS ADVANCED CONCEPT | KITSCH SPACE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Advanced Thread Operations Thread sleep: thread::sleep pauses the current thread. Thread‑local storage: thread_local! macro defines static variables unique to each thread. Thread naming: Builder::name">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RUST THREADS ADVANCED CONCEPT">
+<meta property="og:url" content="https://kitsh1221.github.io/myblog/2026/05/14/thread1/index.html">
+<meta property="og:site_name" content="KITSCH SPACE">
+<meta property="og:description" content="Advanced Thread Operations Thread sleep: thread::sleep pauses the current thread. Thread‑local storage: thread_local! macro defines static variables unique to each thread. Thread naming: Builder::name">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-14T05:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-14T06:54:19.907Z">
+<meta property="article:author" content="kitsch">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/myblog/atom.xml" title="KITSCH SPACE" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/myblog/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/myblog/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/myblog/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/myblog/" id="logo">KITSCH SPACE</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/myblog/">Home</a>
+        
+          <a class="main-nav-link" href="/myblog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/myblog/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://KITSH1221.github.io/myblog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-thread1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/myblog/2026/05/14/thread1/" class="article-date">
+  <time class="dt-published" datetime="2026-05-14T05:00:00.000Z" itemprop="datePublished">2026-05-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RUST THREADS ADVANCED CONCEPT
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Advanced-Thread-Operations"><a href="#Advanced-Thread-Operations" class="headerlink" title="Advanced Thread Operations"></a>Advanced Thread Operations</h1><ul>
+<li><strong>Thread sleep</strong>: <code>thread::sleep</code> pauses the current thread.</li>
+<li><strong>Thread‑local storage</strong>: <code>thread_local!</code> macro defines static variables unique to each thread.</li>
+<li><strong>Thread naming</strong>: <code>Builder::name</code> assigns a name for debugging.</li>
+<li><strong>Thread priority</strong>: Set via <code>thread::Builder</code> (platform‑dependent).</li>
+<li><strong>Thread pools</strong>: Libraries like <code>rayon</code> manage thread reuse.</li>
+<li><strong>Thread communication</strong>: Use <code>std::sync::mpsc</code> (multi‑producer single‑consumer) or third‑party crates (e.g., <code>crossbeam</code>).</li>
+<li><strong>Shared state</strong>: <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> or <code>Arc&lt;RwLock&lt;T&gt;&gt;</code> safely share mutable data across threads.</li>
+<li><strong>Synchronization primitives</strong>: <code>Barrier</code> synchronizes multiple threads, <code>Condvar</code> implements condition variables.</li>
+<li><strong>Thread park&#x2F;unpark</strong>: <code>thread::park</code> blocks a thread, <code>unpark</code> wakes it, useful for custom scheduling.</li>
+<li><strong>Get current thread handle</strong>: <code>thread::current()</code>.</li>
+<li><strong>Scoped threads</strong>: <code>crossbeam::scope</code> or standard‑library <code>thread::scope</code> (Rust 1.63+) allow threads to borrow stack data without <code>move</code>.</li>
+</ul>
+<p>Rust statically prevents data races through the ownership system and the <code>Send</code> and <code>Sync</code> traits.</p>
+<p>Types that implement <code>Send</code> can be transferred across thread boundaries.</p>
+<p>Types that implement <code>Sync</code> can be referenced from multiple threads simultaneously.</p>
+<p>Most Rust standard types are <code>Send + Sync</code>; exceptions include <code>Rc&lt;T&gt;</code> (non‑atomic reference counting) and raw pointers.</p>
+<h2 id="Example-Code-for-handling-the-panic"><a href="#Example-Code-for-handling-the-panic" class="headerlink" title="Example Code for handling the panic"></a>Example Code for handling the panic</h2><p><code>join()</code> returns a <code>Result</code>. If the thread panics, the <code>Result</code> is an <code>Err</code>.This demonstrates how to catch and handle a panic from a spawned thread.</p>
+<h3 id="handling-error"><a href="#handling-error" class="headerlink" title="handling error"></a>handling error</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">handle_the_panic</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle</span>=thread::<span class="title function_ invoke__">spawn</span>(||&#123;</span><br><span class="line">        <span class="comment">// simulate panic</span></span><br><span class="line">        <span class="built_in">panic!</span>(<span class="string">&quot;gonna be panic&quot;</span>)</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">match</span> handle.<span class="title function_ invoke__">join</span>() &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(_) =&gt; (),</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(e) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;thread panic &#123;:?&#125;&quot;</span>,e)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// handle.join.unwrap()</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Named-thread-and-custom-stack-size"><a href="#Named-thread-and-custom-stack-size" class="headerlink" title="Named thread and custom stack size."></a>Named thread and custom stack size.</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">builder</span>=thread::Builder::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">name</span>(<span class="string">&quot;thread1&quot;</span>).<span class="title function_ invoke__">stack_size</span>(<span class="number">32</span>*<span class="number">1024</span>);<span class="comment">//32kb</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">handle</span>=builder.<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;thread name &#123;:?&#125;&quot;</span>,thread::<span class="title function_ invoke__">current</span>().<span class="title function_ invoke__">name</span>());</span><br><span class="line">    <span class="number">42</span></span><br><span class="line">&#125;).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>=handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;the thread result &#123;:?&#125;&quot;</span>,result)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Scoped-threads-Rust-1-63"><a href="#Scoped-threads-Rust-1-63" class="headerlink" title="Scoped threads (Rust 1.63+)"></a>Scoped threads (Rust 1.63+)</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">scoped_thread</span>()<span class="punctuation">-&gt;</span>(<span class="type">i32</span>,<span class="type">i32</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_sum</span>=<span class="built_in">vec!</span>[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b_sum</span>=<span class="built_in">vec!</span>[<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>];</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">scope</span>(|s| &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">handle1</span>=s.<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">            a_sum.<span class="title function_ invoke__">iter</span>().sum::&lt;<span class="type">i32</span>&gt;()</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">handle2</span>=s.<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">            b_sum.<span class="title function_ invoke__">iter</span>().sum::&lt;<span class="type">i32</span>&gt;()</span><br><span class="line">        &#125;);</span><br><span class="line">        (handle1.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>(),handle2.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>())</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://kitsh1221.github.io/myblog/2026/05/14/thread1/" data-id="cuida2d9zT0uaO_ySnHF3ro2S" data-title="RUST THREADS ADVANCED CONCEPT" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/myblog/2026/05/08/rust_prac/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">RUST PRAC FOR THREAD AND MACRO</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/myblog/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/myblog/archives/2026/04/">四月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/myblog/2026/05/14/thread1/">RUST THREADS ADVANCED CONCEPT</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/05/08/rust_prac/">RUST PRAC FOR THREAD AND MACRO</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/20/CLOUSR/">CLOSURE PRAC</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/19/doublelist/">Biderectional List prac in rust</a>
+          </li>
+        
+          <li>
+            <a href="/myblog/2026/04/18/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 kitsch<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/myblog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/myblog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/myblog/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/myblog/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/myblog/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
